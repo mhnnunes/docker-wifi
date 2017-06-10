@@ -9,7 +9,7 @@ do
 done
 
 #Gets the PID of the running container
-PID=$(sudo docker inspect -f '{{.State.Pid}}' wifi-container)
+PID=$(docker inspect -f '{{.State.Pid}}' wifi-container)
 #Make a link for the interface inside the process PID
 sudo ln -s /proc/$PID/ns/net /var/run/netns/$PID
 #Move the interface to the process' namespace
