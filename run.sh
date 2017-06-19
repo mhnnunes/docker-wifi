@@ -1,8 +1,9 @@
 #!/bin/bash
-/opt/pidbind.sh &
+/opt/docker-wifi/pidbind.sh &
 
 DOCKER=`docker ps -a | wc -l`
-if [[ $DOCKER > 1 ]];
+if [ $DOCKER > 1 ]
+then
     docker rm -f $(docker ps -a)
 fi
 
