@@ -3,7 +3,7 @@
 DOCKER=`docker ps -a | wc -l`
 if [ $DOCKER > 1 ]
 then
-    docker rm -f $(docker ps -a | tail -n +2 |awk '{print $1}' ) 
+    docker rm -f $(docker ps -a | tail -n +2 |awk '{print $1}' ) &> /dev/null
 fi
 
 /opt/docker-wifi/pidbind.sh &
