@@ -2,12 +2,16 @@
 #Checks if the container has already loaded. 
 #If positive, moves the interface to the namespace of the container
 LINES=`docker ps -a | wc -l`
+NETNS=`ls /var/run | grep netns | wc -l`
 
 while [[ $LINES == 1 ]];
 do
 	LINES=`docker ps -a | wc -l`
 done
 
+if [[ $NETNS == 0 ]];
+    sudo mkdir /var/run/netns
+fi
 #Gets the PID of the running container
 PID=$(docker inspect -f '{{.State.Pid}}' wifi-container)
 #Make a link for the interface inside the process PID
