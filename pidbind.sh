@@ -3,7 +3,7 @@
 #If positive, moves the interface to the namespace of the container
 LINES=`docker ps -a | wc -l`
 NETNS=`ls /var/run | grep netns | wc -l`
-DOCKER=`docker ps -a | wc -l`
+#DOCKER=`docker ps -a | wc -l`
 
 while [[ $LINES == 1 ]];
 do
@@ -15,10 +15,10 @@ then
     sudo mkdir /var/run/netns
 fi
 
-if [ $DOCKER > 1 ]
-then
-    docker rm -f $(docker ps -a)
-fi
+#if [ $DOCKER > 1 ]
+#then
+   # docker rm -f $(docker ps -a)
+#fi
 
 #Gets the PID of the running container
 PID=$(docker inspect -f '{{.State.Pid}}' wifi-container)
