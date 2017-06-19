@@ -15,7 +15,8 @@ then
     sudo mkdir /var/run/netns
 fi
 
-if [[ $DOCKER > 1 ]];
+if [ $DOCKER > 1 ]
+then
     docker rm -f $(docker ps -a)
 fi
 
