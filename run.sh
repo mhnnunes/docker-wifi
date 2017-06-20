@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOCKER=`docker ps -f name=wifi-container`
+DOCKER=`docker ps -f name=wifi-container | wc -l`
 if [ $DOCKER > 1 ]
 then
     # docker rm -f $(docker ps -a | tail -n +2 |awk '{print $1}' ) &> /dev/null
