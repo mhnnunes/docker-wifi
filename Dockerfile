@@ -1,16 +1,16 @@
 FROM docker.io/ubuntu:14.04
 
 RUN apt-get update && \
-    apt-get -qy install apt-utils curl libnl1 libnl-dev \
-        build-essential python python-pip \
+    apt-get -qy install apt-utils curl libssl-dev libnl1 libnl-dev \
+        build-essential python python-pip make cmake \
         ca-certificates net-tools iputils-ping usbutils\
         vim pkg-config nano openssh-client openssh-server git \
         bridge-utils iptables wireless-tools man rfkill \
-        wpasupplicant hostapd
+        wpasupplicant libnl-3-dev libnl-genl-3-dev
 
-RUN git clone git://w1.fi/srv/git/hostap.git /home/
+RUN git clone git://w1.fi/srv/git/hostap.git /home/hostap
 RUN cd /home/hostap/hostapd
-ADD ../hostap/hostapd/.config /home/hostap/hostapd/.config
+ADD .config /home/hostap/hostapd/.config
 RUN make
 RUN make install
 RUN cd /home
