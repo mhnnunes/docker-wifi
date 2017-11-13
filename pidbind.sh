@@ -31,3 +31,16 @@ sudo ip netns exec $PID ip link set wlp2s0 up
 #After these steps, the interface will be shown inside the container.
 #Run 'ifconfig' and you will see wlp2s0, with no IP address set, but up and running	
 
+#Start configuring the ethernet interface inside the container
+# Add a new virtual interface, binding it in bridge mode to br0
+# It will receive a dinalmically allocated MAC address from the kernel
+sudo ip link add virtual0 link br0 type macvlan mode bridge
+# Bring interface up
+sudo ip link set virtual0 up
+# Bringing interface up inside the container
+sudo ip link set virtual0 netns $PID
+sudo ip netns exec $PID ip link set virtual0 up
+docker exec wifi-container dhclient virtual0
+
+
+
