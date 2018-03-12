@@ -11,7 +11,7 @@ fi
 CONTAINER=$1
 DOCKER=`docker ps -f name=wifi-container | wc -l`
 LXCLIST=`lxc list | grep wifi-container | wc -l`
-if [["$CONTAINER" =~ ^(ethanol|srslte|ubuntu16|ubuntu14)$ ]]; then
+if [[ "$CONTAINER" =~ ^(ethanol|srslte|ubuntu16|ubuntu14)$ ]]; then
   # Container is of type docker
   if (( $DOCKER == 1 )) # Only the header line returned from 'docker ps'
   then                  # meaning no container is active on this machine.
@@ -26,6 +26,8 @@ if [["$CONTAINER" =~ ^(ethanol|srslte|ubuntu16|ubuntu14)$ ]]; then
       --cap-add=SYS_MODULE \
       --name=wifi-container \
       $CONTAINER > /dev/null 2> /dev/null
+      docker exec -ti wifi-container "mv /usr/sbin/tcpdump /usr/bin && \
+      ln -s /usr/bin/tcpdump /usr/sbin/tcpdump"
       /opt/docker-wifi/pidbind.sh $CONTAINER &
   fi
   # Open a bash inside of the container and return the tty.
