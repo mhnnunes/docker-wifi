@@ -1,8 +1,7 @@
-docker-wifi  
-======================
+# docker-wifi  
 
 This repository contains a set of scripts that, together, get a container up and running on a machine.  
 
-* The script pidbind.sh copies the machine wifi network interface to the container  
+* The script pidbind.sh copies the machine wifi network interface into the container's network namespace  
     * Basically following [this tutorial](https://github.com/fgg89/docker-ap/wiki/Container-access-to-wireless-network-interface).  
-* The script run.sh runs the container and calls pidbind on the background.    
+* The script run.sh runs the container and calls pidbind on the background.  
