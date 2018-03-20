@@ -1,16 +1,6 @@
 #!/bin/bash
 CONTAINER=$1
 
-function wait_container(){
-  LINES=`eval "${1}"` # Run command passed as parameter
-  # Checks if the container has already loaded. 
-  # If positive, moves the interface to the namespace of the container
-  while [[ $LINES == 1 ]]; # Wait for the container to load
-  do
-    LINES=`eval "${1}"`
-  done
-}
-
 # Check if network namespace directory exists, if not, create it
 NETNS=`ls /var/run | grep netns | wc -l`
 
@@ -19,17 +9,14 @@ then
   sudo mkdir /var/run/netns
 fi
 
-if [["$CONTAINER" =~ ^(ethanol|srslte|ubuntu16|ubuntu14)$ ]]; then
+if [[ "${CONTAINER}" =~ ^(ethanol|srslte|ubuntu16|ubuntu14)$ ]]; then
   # Container is of type docker
   # Gets the PID of the running container
   PID=$(docker inspect -f '{{.State.Pid}}' wifi-container)
-  LINES="docker ps -a | wc -l"
-  wait_container $LINES
-else
+ else
   # Container is of type LXC
+  echo "testing lxc"
   PID=`lxc info wifi-container | grep Pid | awk '{print $2}'`
-  LINES="lxc list | grep wifi-container | wc -l"
-  wait_container $LINES
 fi
 
 
@@ -41,7 +28,7 @@ sudo iw phy phy0 set netns $PID >/dev/null 2>/dev/null
 sudo ip netns exec $PID ip link set wlp2s0 up >/dev/null 2>/dev/null
 # After these steps, the interface will be shown inside the container.
 # Run 'ifconfig' and you will see wlp2s0, with no IP address set,
-# but up and running	
+# but up and running  
 
 # Start configuring the ethernet interface inside the container
 # Add a new virtual interface, binding it in bridge mode to br0
@@ -56,10 +43,11 @@ sudo ip netns exec $PID ip link set virtual0 up >/dev/null 2>/dev/null
 
 
 # Get virtual0 a working IP address inside of container
-if [["$CONTAINER" =~ ^(ethanol|srslte|ubuntu16|ubuntu14)$ ]]; then
+if [[ "${CONTAINER}" =~ ^(ethanol|srslte|ubuntu16|ubuntu14)$ ]]; then
   # Container is of type docker
   docker exec wifi-container dhclient virtual0 >/dev/null 2>/dev/null
 else
   # Container is of type LXC
+  echo "exec lxc"
   lxc exec wifi-container dhclient virtual0 >/dev/null 2>/dev/null
 fi
