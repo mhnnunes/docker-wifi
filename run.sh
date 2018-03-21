@@ -13,10 +13,16 @@ if [[ "${CONTAINER}" =~ ^(ethanol|srslte|ubuntu16|ubuntu14)$ ]]; then
   # Container is of type docker
   if (( $DOCKER == 0 )) # Only the header line returned from 'docker ps'
   then                  # meaning no container is active on this machine.
-      docker run -dit --device /dev/rfkill:/dev/rfkill -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=unix$DISPLAY --device /dev/snd --privileged --network bridge --cap-add=NET_ADMIN --cap-add=SYS_MODULE --name=wifi-container $CONTAINER > /dev/null 2> /dev/null
-      docker exec wifi-container apt install -y tcpdump > /dev/null 2> /dev/null
-      docker exec wifi-container mv /usr/sbin/tcpdump /usr/bin > /dev/null 2> /dev/null
-      docker exec wifi-container ln -s /usr/bin/tcpdump /usr/sbin/tcpdump > /dev/null 2> /dev/null
+      docker run -dit \
+      --device /dev/rfkill:/dev/rfkill \
+      -v /tmp/.X11-unix:/tmp/.X11-unix \
+      -e DISPLAY=unix$DISPLAY \
+      --device /dev/snd \
+      --privileged \
+      --network bridge \
+      --cap-add=NET_ADMIN \
+      --cap-add=SYS_MODULE \
+      --name=wifi-container $CONTAINER > /dev/null 2> /dev/null
       /opt/docker-wifi/pidbind.sh $CONTAINER &
   fi
   # Open a bash inside of the container and return the tty.
