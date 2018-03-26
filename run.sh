@@ -32,6 +32,7 @@ else # Container is of type LXC
   if (( $LXCLIST == 0 )) # No other container is currently running
   then
     lxc launch $CONTAINER wifi-container > /dev/null 2> /dev/null
+    /opt/docker-wifi/pidbind.sh $CONTAINER &
   fi
   # Open a bash inside of the container and return the tty.
   lxc exec wifi-container bash
