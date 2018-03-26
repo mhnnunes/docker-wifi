@@ -15,7 +15,6 @@ if [[ "${CONTAINER}" =~ ^(ethanol|srslte|ubuntu16|ubuntu14)$ ]]; then
   PID=$(docker inspect -f '{{.State.Pid}}' wifi-container)
  else
   # Container is of type LXC
-  echo "testing lxc"
   PID=`lxc info wifi-container | grep Pid | awk '{print $2}'`
 fi
 
@@ -48,6 +47,5 @@ if [[ "${CONTAINER}" =~ ^(ethanol|srslte|ubuntu16|ubuntu14)$ ]]; then
   docker exec wifi-container dhclient virtual0 >/dev/null 2>/dev/null
 else
   # Container is of type LXC
-  echo "exec lxc"
   lxc exec wifi-container dhclient virtual0 >/dev/null 2>/dev/null
 fi
