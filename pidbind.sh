@@ -18,13 +18,13 @@ if [[ "${CONTAINER}" =~ ^(ethanol|srslte|ubuntu16|ubuntu14)$ ]]; then
   PID=`lxc info wifi-container | grep Pid | awk '{print $2}'`
 fi
 
-
+WIFI_INTERFACE=`ifconfig | grep wl | awk '{print $1}'`
 # Make a link for the interface inside the process PID
 sudo ln -s /proc/$PID/ns/net /var/run/netns/$PID >/dev/null 2>/dev/null
 # Move the interface to the process' namespace
 sudo iw phy phy0 set netns $PID >/dev/null 2>/dev/null
 # Bring up the interface inside the container
-sudo ip netns exec $PID ip link set wlp2s0 up >/dev/null 2>/dev/null
+sudo ip netns exec $PID ip link set $WIFI_INTERFACE up >/dev/null 2>/dev/null
 # After these steps, the interface will be shown inside the container.
 # Run 'ifconfig' and you will see wlp2s0, with no IP address set,
 # but up and running  
