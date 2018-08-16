@@ -1,5 +1,10 @@
 #!/bin/bash
+
 CONTAINER=$1
+
+ISDOCKERPC=`cat docker-pc-images | grep $CONTAINER | wc -l`
+ISDOCKERRASP=`cat docker-rasp-images | grep $CONTAINER | wc -l`
+ISLXCPC=`cat lxc-pc-images | grep $CONTAINER | wc -l`
 
 # Check if network namespace directory exists, if not, create it
 NETNS=`ls /var/run | grep netns | wc -l`
@@ -9,7 +14,8 @@ then
   sudo mkdir /var/run/netns
 fi
 
-if [[ "${CONTAINER}" =~ ^(ethanol|srslte|ubuntu16|ubuntu14)$ ]]; then
+if (( $ISDOCKERPC || $ISDOCKERRASP ))
+then
   # Container is of type docker
   # Gets the PID of the running container
   PID=$(docker inspect -f '{{.State.Pid}}' wifi-container)
@@ -32,8 +38,14 @@ sudo ip netns exec $PID ip link set $WIFI_INTERFACE up >/dev/null 2>/dev/null
 # Start configuring the ethernet interface inside the container
 # Add a new virtual interface, binding it in bridge mode to br0
 # It will receive a dinalmically allocated MAC address from the kernel
+if (( $ISDOCKERRASP ))
+then # In Raspberries we use the eth0 interface for creating the bridge
+sudo ip link add virtual0 link eth0 type macvlan mode bridge >/dev/null \
+  2>/dev/null
+else
 sudo ip link add virtual0 link br0 type macvlan mode bridge >/dev/null \
   2>/dev/null
+fi
 # Bring interface up
 sudo ip link set virtual0 up >/dev/null 2>/dev/null 
 # Bring interface up inside the container
@@ -42,7 +54,8 @@ sudo ip netns exec $PID ip link set virtual0 up >/dev/null 2>/dev/null
 
 
 # Get virtual0 a working IP address inside of container
-if [[ "${CONTAINER}" =~ ^(ethanol|srslte|ubuntu16|ubuntu14)$ ]]; then
+if (( $ISDOCKERPC || $ISDOCKERRASP ))
+then
   # Container is of type docker
   docker exec wifi-container dhclient virtual0 >/dev/null 2>/dev/null
 else

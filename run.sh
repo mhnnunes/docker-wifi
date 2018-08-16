@@ -2,13 +2,22 @@
 
 # Check execution conditions
 if [ $# -eq 0 ]; then
-    echo "Usage: $0 [image_type (options: ethanol | srslte | ubuntu16 | \
-ubuntu14]"
+    echo "Usage: $0 [image_type]"
+    echo "image_type must be one of:"
+    cat docker-pc-images
+    cat docker-rasp-images
+    cat lxc-pc-images
     exit 0
 fi
 
 CONTAINER=$1
-if [[ "${CONTAINER}" =~ ^(ethanol|srslte|ubuntu16|ubuntu14)$ ]]; then
+
+ISDOCKERPC=`cat docker-pc-images | grep $CONTAINER | wc -l`
+ISDOCKERRASP=`cat docker-rasp-images | grep $CONTAINER | wc -l`
+ISLXCPC=`cat lxc-pc-images | grep $CONTAINER | wc -l`
+
+if (( $ISDOCKERPC || $ISDOCKERRASP ))
+then
   DOCKER=`docker ps -a | grep wifi-container | wc -l`
   # Container is of type docker
   if (( $DOCKER == 0 )) # Only the header line returned from 'docker ps'
