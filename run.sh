@@ -12,9 +12,12 @@ fi
 
 CONTAINER=$1
 
-ISDOCKERPC=`cat docker-pc-images | grep $CONTAINER | wc -l`
-ISDOCKERRASP=`cat docker-rasp-images | grep $CONTAINER | wc -l`
-ISLXCPC=`cat lxc-pc-images | grep $CONTAINER | wc -l`
+SCRIPT=`realpath $0`
+SCRIPTPATH=`dirname $SCRIPT`
+
+ISDOCKERPC=`cat $SCRIPTPATH/docker-pc-images | grep $CONTAINER | wc -l`
+ISDOCKERRASP=`cat $SCRIPTPATH/docker-rasp-images | grep $CONTAINER | wc -l`
+ISLXCPC=`cat $SCRIPTPATH/lxc-pc-images | grep $CONTAINER | wc -l`
 
 if (( $ISDOCKERPC || $ISDOCKERRASP ))
 then

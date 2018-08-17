@@ -2,9 +2,12 @@
 
 CONTAINER=$1
 
-ISDOCKERPC=`cat docker-pc-images | grep $CONTAINER | wc -l`
-ISDOCKERRASP=`cat docker-rasp-images | grep $CONTAINER | wc -l`
-ISLXCPC=`cat lxc-pc-images | grep $CONTAINER | wc -l`
+SCRIPT=`realpath $0`
+SCRIPTPATH=`dirname $SCRIPT`
+
+ISDOCKERPC=`cat $SCRIPTPATH/docker-pc-images | grep $CONTAINER | wc -l`
+ISDOCKERRASP=`cat $SCRIPTPATH/docker-rasp-images | grep $CONTAINER | wc -l`
+ISLXCPC=`cat $SCRIPTPATH/lxc-pc-images | grep $CONTAINER | wc -l`
 
 # Check if network namespace directory exists, if not, create it
 NETNS=`ls /var/run | grep netns | wc -l`
